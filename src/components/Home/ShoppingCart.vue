@@ -5,7 +5,7 @@
         <span>全选</span><Checkbox v-model="allselect" style="margin-left:10px" @on-change="getAll()"></Checkbox>
         <a href="" style="color:#000;margin-left:20px" @click="clearCart()">清空购物车</a>
 
-        <button style="height:50px;width:100px;background:red;float:right;border:none;color:#fff">去结算</button>
+        <button style="height:50px;width:100px;background:red;float:right;border:none;color:#fff" @click="paycart()">去结算</button>
         <span style="float:right;padding-right:20px" >已选 {{isselect}} 件商品，合计  ￥{{sum}} 元</span>
 
     </div>
@@ -149,6 +149,38 @@
            this.data1=JSON.parse(localStorage.getItem("cart") || "[]")
 
        },
+       paycart(){
+            let username=localStorage.getItem("username")
+            if(username == null){
+                this.$Message.error({
+                    content: '您没有登录',
+                    duration: 2,
+                    closable: true
+                })
+            }
+            else if(this.sum==0){
+                this.$Message.error({
+                    content: '您没有选择东西',
+                    duration: 2,
+                    closable: true
+                })
+            }
+            else{
+                const newlist = []
+                for (let i = 0; i < this.data1.length; i++) {
+                    if(this.data1[i].isact==false)
+                    newlist.push(this.data1[i])  
+                }
+                this.allselect=false
+                localStorage.setItem("cart", JSON.stringify(newlist));
+                this.data1=JSON.parse(localStorage.getItem("cart") || "[]")
+                this.$Message.success({
+                    content: '购买成功',
+                    duration: 10,
+                    closable: true
+                })
+            }
+        },
         getSum(id){
 
             for (let i = 0; i < this.data1.length; i++) {
